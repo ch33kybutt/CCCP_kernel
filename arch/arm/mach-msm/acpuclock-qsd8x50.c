@@ -74,7 +74,7 @@ struct clkctl_acpu_speed {
 struct clkctl_acpu_speed acpu_freq_tbl[] = {
         {  19200, CCTL(CLK_TCXO, 1),            SRC_RAW, 0, 0, 975, 14000 },
         { 128000, CCTL(CLK_TCXO, 1),            SRC_AXI, 0, 0, 975, 14000 },
-        { 245000, CCTL(CLK_MODEM_PLL, 1),       SRC_RAW, 0, 0, 1000, 29000 },
+        { 245760, CCTL(CLK_MODEM_PLL, 1),       SRC_RAW, 0, 0, 1000, 29000 },
         /* Work arround for acpu resume hung, GPLL is turn off by arm9 */
         /*{ 256000, CCTL(CLK_GLOBAL_PLL, 3),      SRC_RAW, 0, 0, 1000, 29000 },*/
         { 384000, CCTL(CLK_TCXO, 1),            SRC_SCPLL, 0x0A, 0, 1025, 58000 },
@@ -116,30 +116,15 @@ static struct cpufreq_frequency_table freq_table[ARRAY_SIZE(acpu_freq_tbl)];
 
 static void __init acpuclk_init_cpufreq_table(void)
 {
-	int i;
-	int vdd;
+	int allowed_speeds[]={245760,384000,576000,768000,998400,1113600};
+	int i,j;
+
 	for (i = 0; acpu_freq_tbl[i].acpu_khz; i++) {
 		freq_table[i].index = i;
 		freq_table[i].frequency = CPUFREQ_ENTRY_INVALID;
-
-		/* Define speeds that we want to skip */
-		if (/* acpu_freq_tbl[i].acpu_khz == 256000 || */
-				acpu_freq_tbl[i].acpu_khz == 19200 ||
-				acpu_freq_tbl[i].acpu_khz == 128000 ||
-				acpu_freq_tbl[i].acpu_khz == 256000)
-			continue;
-
-		vdd = acpu_freq_tbl[i].vdd;
-		/* Allow mpll and the first scpll speeds */
-		if (acpu_freq_tbl[i].acpu_khz == acpu_mpll->acpu_khz ||
-				acpu_freq_tbl[i].acpu_khz == 384000) {
-			freq_table[i].frequency = acpu_freq_tbl[i].acpu_khz;
-			continue;
-		}
-
-		/* Add to the table */
-		//if (vdd != acpu_freq_tbl[i + 1].vdd)
-			freq_table[i].frequency = acpu_freq_tbl[i].acpu_khz;
+		for(j=0;j<ARRAY_SIZE(allowed_speeds);j++)
+			if(acpu_freq_tbl[i].acpu_khz==allowed_speeds[j])
+				freq_table[i].frequency = acpu_freq_tbl[i].acpu_khz;
 	}
 
 	freq_table[i].index = i;
