@@ -105,18 +105,18 @@ struct clkctl_acpu_speed acpu_freq_tbl[] = {
  *
  * Currently: MPLL
  */
-struct clkctl_acpu_speed *acpu_stby = &acpu_freq_tbl[2];
+struct clkctl_acpu_speed *acpu_stby = &acpu_freq_tbl[1];
 #define IS_ACPU_STANDBY(x)	(((x)->clk_cfg == acpu_stby->clk_cfg) && \
 				 ((x)->clk_sel == acpu_stby->clk_sel))
 
-struct clkctl_acpu_speed *acpu_mpll = &acpu_freq_tbl[2];
+struct clkctl_acpu_speed *acpu_mpll = &acpu_freq_tbl[1];
 
 #ifdef CONFIG_CPU_FREQ_TABLE
 static struct cpufreq_frequency_table freq_table[ARRAY_SIZE(acpu_freq_tbl)];
 
 static void __init acpuclk_init_cpufreq_table(void)
 {
-	int allowed_speeds[]={245760,384000,576000,768000,998400,1113600};
+	int allowed_speeds[]={128000,245760,384000,576000,768000,998400,1036800,1075200,1113600};
 	int i,j;
 
 	for (i = 0; acpu_freq_tbl[i].acpu_khz; i++) {
