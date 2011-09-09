@@ -351,7 +351,8 @@ static int tps65023_dcdc_get_voltage(struct regulator_dev *dev)
 }
 
 static int tps65023_dcdc_set_voltage(struct regulator_dev *dev,
-				int min_uV, int max_uV)
+				     int min_uV, int max_uV,
+				     unsigned *selector)
 {
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
 	int dcdc = rdev_get_id(dev);
@@ -379,6 +380,8 @@ static int tps65023_dcdc_set_voltage(struct regulator_dev *dev,
 			break;
 	}
 
+	*selector = vsel;
+
 	/* write to the register in case we found a match */
 	if (vsel == tps->info[dcdc]->table_len)
 		return -EINVAL;
@@ -400,6 +403,50 @@ static int tps65023_dcdc_set_voltage(struct regulator_dev *dev,
 	return rv;
 }
 
+/* TPS65023_registers */
+#define TPS65023_VERSION	0
+#define TPS65023_PGOODZ		1
+#define TPS65023_MASK		2
+#define TPS65023_REG_CTRL	3
+#define TPS65023_CON_CTRL	4
+#define TPS65023_CON_CTRL2	5
+#define TPS65023_DEFCORE	6
+#define TPS65023_DEFSLEW	7
+#define TPS65023_LDO_CTRL	8
+#define TPS65023_MAX		9
+
+static struct tps_pmic *tps;
+
+int tps65023_set_dcdc1_level(struct regulator_dev *dev, int mvolts)
+{
+	int val;
+	int ret;
+
+	if (!tps) {
+		tps = rdev_get_drvdata(dev);
+	}
+
+	if (!tps->client)
+		return -ENODEV;
+
+	if (mvolts < 800 || mvolts > 1600)
+		return -EINVAL;
+
+	if (mvolts == 1600)
+		val = 0x1F;
+	else
+		val = ((mvolts - 800)/25) & 0x1F;
+
+	ret = i2c_smbus_write_byte_data(tps->client, TPS65023_DEFCORE, val);
+
+	if (!ret)
+		ret = i2c_smbus_write_byte_data(tps->client,
+				TPS65023_CON_CTRL2, 0x80);
+
+	return ret;
+}
+EXPORT_SYMBOL(tps65023_set_dcdc1_level);
+
 static int tps65023_ldo_get_voltage(struct regulator_dev *dev)
 {
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
@@ -418,7 +465,7 @@ static int tps65023_ldo_get_voltage(struct regulator_dev *dev)
 }
 
 static int tps65023_ldo_set_voltage(struct regulator_dev *dev,
-				int min_uV, int max_uV)
+				    int min_uV, int max_uV, unsigned *selector)
 {
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
 	int data, vsel, ldo = rdev_get_id(dev);
@@ -442,6 +489,8 @@ static int tps65023_ldo_set_voltage(struct regulator_dev *dev,
 
 	if (vsel == tps->info[ldo]->table_len)
 		return -EINVAL;
+
+	*selector = vsel;
 
 	data = tps_65023_reg_read(tps, TPS65023_REG_LDO_CTRL);
 	if (data < 0)
@@ -584,6 +633,9 @@ static int __devexit tps_65023_remove(struct i2c_client *client)
 {
 	struct tps_pmic *tps = i2c_get_clientdata(client);
 	int i;
+
+	/* clear the client data in i2c */
+	i2c_set_clientdata(client, NULL);
 
 	for (i = 0; i < TPS65023_NUM_REGULATOR; i++)
 		regulator_unregister(tps->rdev[i]);

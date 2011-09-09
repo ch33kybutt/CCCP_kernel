@@ -259,6 +259,20 @@ config HTC_POWER_COLLAPSE_MAGIC
         default n
         bool "Check Power Collapse State"
 
+config QSD_SVS
+	bool "QSD Static Voltage Scaling"
+	depends on (ARCH_MSM_SCORPION)
+	default y
+	help
+	  Enables static voltage scaling using the TPS65023 PMIC.
+
+config QSD_PMIC_DEFAULT_DCDC1
+	int "PMIC default output voltage"
+	depends on (ARCH_MSM_SCORPION)
+	default 1275
+	help
+	  This is the PMIC voltage at Linux kernel boot.
+
 config CACHE_FLUSH_RANGE_LIMIT
 	hex "Cache flush range limit"
 	default 0x40000
@@ -467,12 +481,12 @@ config MSM_CPU_FREQ_SET_MIN_MAX
 config MSM_CPU_FREQ_MAX
         int "Max CPU Frequency"
         depends on MSM_CPU_FREQ_SET_MIN_MAX
-        default 384000
+        default 998400
 
 config MSM_CPU_FREQ_MIN
         int "Min CPU Frequency"
         depends on MSM_CPU_FREQ_SET_MIN_MAX
-        default 245760
+        default 245000
 
 endif # CPU_FREQ_MSM
 
@@ -483,6 +497,26 @@ config AXI_SCREEN_POLICY
   default y
   help
     Simple AXI scaling based on screen ON/OFF and PWRC.
+
+config MSM_CPU_AVS
+	bool "Enable software controlled Adaptive Voltage Scaling (AVS)"
+	depends on (ARCH_MSM_SCORPION && QSD_SVS)
+	depends on ARCH_QSD8X50
+	default n
+	select MSM_AVS_HW
+	help
+	  This enables the s/w control of Adaptive Voltage Scaling feature
+	  in Qualcomm ARMv7 CPUs. It adjusts the voltage for each frequency
+	  based on feedback from three ring oscillators in the CPU.
+
+config MSM_AVS_HW
+	bool "Enable Adaptive Voltage Scaling (AVS)"
+	default n
+	help
+	  Enable AVS hardware to fine tune voltage at each frequency. The
+	  AVS hardware blocks associated with each Qualcomm ARMv7 cores can
+	  fine tune the voltages based on the feedback from the ring
+	  oscillators.
 
 config MSM_HW3D
 	tristate "MSM Hardware 3D Register Driver"
