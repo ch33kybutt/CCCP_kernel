@@ -35,7 +35,7 @@
 #define VOLTAGE_MAX		MAHIMAHI_MAX_UV_MV
 
 #define VOLTAGE_MIN_START	950	// Minimum value to start off with
-#define VOLTAGE_STEP 25
+#define VOLTAGE_STEP 		25
 
 int __init avs_init(int (*set_vdd)(int), u32 freq_cnt, u32 freq_idx);
 void __exit avs_exit(void);
