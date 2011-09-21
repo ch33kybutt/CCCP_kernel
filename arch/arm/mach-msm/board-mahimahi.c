@@ -991,8 +991,8 @@ static struct msm_acpu_clock_platform_data mahimahi_clock_data = {
 	.max_speed_delta_khz	= 256000,
 	.vdd_switch_time_us	= 62,
 	.power_collapse_khz	= 128000,
-	.wait_for_irq_khz	= 128000,
-	.mpll_khz		= 245000
+	.wait_for_irq_khz	= 245760,
+	.mpll_khz		= 245760
 };
 
 static struct msm_acpu_clock_platform_data mahimahi_cdma_clock_data = {
