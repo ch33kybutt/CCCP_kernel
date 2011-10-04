@@ -51,11 +51,11 @@
 #include <mach/msm_serial_hs.h>
 #include <mach/bcm_bt_lpm.h>
 #include <mach/msm_smd.h>
+#include <mach/msm_flashlight.h>
 
 #include "board-mahimahi.h"
 #include "devices.h"
 #include "proc_comm.h"
-#include "board-mahimahi-flashlight.h"
 #include "board-mahimahi-tpa2018d1.h"
 #include "board-mahimahi-smb329.h"
 
