@@ -703,7 +703,7 @@ static uint32_t flashlight_gpio_table_rev_CX[] = {
 };
 
 
-static int config_mahimahi_flashlight_gpios(void)
+static void config_mahimahi_flashlight_gpios(void)
 {
 	if (is_cdma_version(system_rev)) {
 		config_gpio_table(flashlight_gpio_table_rev_CX,
@@ -712,7 +712,7 @@ static int config_mahimahi_flashlight_gpios(void)
 		config_gpio_table(flashlight_gpio_table,
 			ARRAY_SIZE(flashlight_gpio_table));
 	}
-	return 0;
+	return;
 }
 
 static struct flashlight_platform_data mahimahi_flashlight_data = {
