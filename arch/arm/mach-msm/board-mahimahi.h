@@ -20,10 +20,10 @@
 
 #ifdef CONFIG_MSM_CPU_AVS
  #define MAHIMAHI_MIN_UV_MV      800
- #define MAHIMAHI_MAX_UV_MV      1275
+ #define MAHIMAHI_MAX_UV_MV      1325
 #else
  #define MAHIMAHI_MIN_UV_MV      975
- #define MAHIMAHI_MAX_UV_MV      1275
+ #define MAHIMAHI_MAX_UV_MV      1325
 #endif
 
 #define MSM_SMI_BASE		0x02B00000

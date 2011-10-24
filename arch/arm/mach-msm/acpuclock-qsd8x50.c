@@ -115,6 +115,8 @@ struct clkctl_acpu_speed acpu_freq_tbl[] = {
 	{ 1036800, CCTL(CLK_TCXO, 1),		SRC_SCPLL, 0x1B, 0, 1275, 128000 },
 	{ 1075200, CCTL(CLK_TCXO, 1),		SRC_SCPLL, 0x1C, 0, 1275, 128000 },
 	{ 1113600, CCTL(CLK_TCXO, 1),		SRC_SCPLL, 0x1D, 0, 1275, 128000 },
+        { 1152000, CCTL(CLK_TCXO, 1),           SRC_SCPLL, 0x1E, 0, 1300, 128000 },
+        { 1190400, CCTL(CLK_TCXO, 1),           SRC_SCPLL, 0x1F, 0, 1325, 128000 },
 	{ 0 },
 };
 
@@ -134,7 +136,7 @@ static struct cpufreq_frequency_table freq_table[ARRAY_SIZE(acpu_freq_tbl)];
 
 static void __init acpuclk_init_cpufreq_table(void)
 {
-	int allowed_speeds[]={128000,245760,384000,576000,768000,998400,1036800,1075200,1113600};
+	int allowed_speeds[]={128000,245760,384000,576000,768000,998400,1036800,1075200,1113600,1152000,1190400};
 	int i,j;
 
 	for (i = 0; acpu_freq_tbl[i].acpu_khz; i++) {
